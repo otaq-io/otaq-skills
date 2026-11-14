@@ -35,7 +35,8 @@ types a reminder into this session.
    you · read these before you start"; read each one (`otaq report SHOP-19 1`, or search a long one with
    `grep -n "Safari" "$(otaq report SHOP-19 1 --path)"`). The agents' reports you open only when you need them.
    **Your stage may have nothing to add.** `prime` lists every stage of the flow under "## The flow", each with what
-   it is for. When this ticket needs nothing your stage does (the earlier stages' commits are already the whole
+   it is for. (In a stage with a task skill, the task skill judges this, not your first turn: see "With a task
+   skill".) When this ticket needs nothing your stage does (the earlier stages' commits are already the whole
    change), end your stage at once with a short note saying so: `otaq stage next` with, on stdin, "Nothing to build: the
    docs Product spec committed are the whole change". That is an ordinary finish, never a skip: only the user skips a
    stage. With no commits on the branch at all, it is nothing to deliver instead (`otaq stage done`, in Otaq's rules).
@@ -112,7 +113,9 @@ plain terminal, so where the two disagree about how, this skill wins; about what
 instructions and the project's notes apply to both.
 
 1. **First turn: get the context, then end your turn.** Run `otaq prime` and read all of it, and open the reports
-   from you (step 1). When your stage has nothing to add, end it at once with a short note, as step 1 says. In a
+   from you (step 1). Don't judge yet whether your stage has anything to add: that is the task skill's call, since
+   it decides what the stage produces. When the task skill finds nothing to do, end the stage then, with a short
+   note, as step 1 says. In a
    Milestone plan stage whose ticket already has a Plan, bring it into the plan file now (see "Keep the Plan in
    step"). Then check nothing else, build nothing and ask nothing yet, and **never start the task skill yourself**:
    end your turn with one line saying you have the context. Otaq types the task skill into this session next.
