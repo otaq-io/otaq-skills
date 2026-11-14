@@ -1,0 +1,9 @@
+{
+  "name": "otaq",
+  "description": "Otaq's workflow skills: how an agent works a ticket on Otaq's board.",
+  "author": {
+    "name": "The Otaq Authors"
+  },
+  "homepage": "https://github.com/otaq-io/otaq-skills",
+  "license": "FSL-1.1-MIT"
+}
