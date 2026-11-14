@@ -178,7 +178,7 @@ flow:
     name: Product spec           # unique; the column's title
     kind: agent                  # agent · check
     agent: Spec writer           # who runs it
-    skill: tuq:product-spec      # the skill it runs first
+    skill: tuq:product-spec      # the skill it runs
     options: [skip]              # optional: a ticket may skip it
     description: "Settles what to build and how it behaves, with the user, before any code: needed for a new feature or a change to what the product does."
 ```
@@ -190,7 +190,7 @@ flow:
 | `kind` | every stage | `agent`: an agent works on the ticket. `check`: an agent or the user passes or fails it. |
 | `by` | check | `agent` (an agent check: read-only, ends with a verdict) or `you` (the user's check: Pass or Fail). |
 | `agent` | agent, agent check | The agent that runs it, by name: one. A check has one agent; two checks are two check stages, one after the other. A check by you has none. |
-| `skill` | agent, agent check | The skill it runs first. Otaq's own are written in their namespace (`otaq:work-ticket`, `otaq:validate`, `tuq:product-spec`…); a bare name (`team-validate`, even `validate`) is always the user's own skill. Never a tool's built-in command such as `/security-review`, `/review` or `/init` (Otaq refuses it): to use one, write a small skill that runs it and name that skill. |
+| `skill` | agent, agent check | The skill it runs. On an Agent stage, one that isn't Otaq's own (`tuq:product-spec`, `team-dev`) runs after Otaq's `work-ticket`, which gets the context, asks through the ticket, commits and ends the stage. Otaq's own are written in their namespace (`otaq:work-ticket`, `otaq:validate`, `tuq:product-spec`…); a bare name (`team-validate`, even `validate`) is always the user's own skill. Never a tool's built-in command such as `/security-review`, `/review` or `/init` (Otaq refuses it): to use one, write a small skill that runs it and name that skill. |
 | `options` | agent, check | `[skip]` when a ticket may skip the stage; nothing else (a stage lists no agents: the user may pick any agent whose tool has the stage's skill for one ticket, and agent names written here are ignored). Default: none. |
 | `rounds` | agent check | How many fails in a row (1–5) before the card stops for the user. |
 | `fail_to` | check | Where a Fail goes back to: an Agent stage before the check, by name (`fail_to: Product spec`). Leave it out for the nearest Agent stage before it (the usual). |

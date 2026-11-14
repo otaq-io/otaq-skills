@@ -1,6 +1,6 @@
 ---
 name: work-ticket
-description: Work on the Otaq ticket named by $OTAQ_TICKET from start to review - get its context with `otaq prime`, follow the user's Agent instructions, check the ticket for gaps and ask what changes what gets built (options with pros and cons) before coding, decide by the size measure whether to build alone or write a Plan of pieces, implement (or, when the Plan has pieces, start a helper per piece, review, test and merge each, and re-split when the work grows or a helper hands back a piece too big), commit everything, then end your stage with a short comment through `otaq stage next` that says what you ran, at which commit, and where the log is. With $OTAQ_PIECE set, build one piece as a helper and hand it back with `otaq helper done`, early with a suggested split when it is too big.
+description: Work on the Otaq ticket named by $OTAQ_TICKET from start to review - get its context with `otaq prime`, follow the user's Agent instructions, check the ticket for gaps and ask what changes what gets built (options with pros and cons) before coding, decide by the size measure whether to build alone or write a Plan of pieces, implement (or, when the Plan has pieces, start a helper per piece, review, test and merge each, and re-split when the work grows or a helper hands back a piece too big), commit everything, then end your stage with a short comment through `otaq stage next` that says what you ran, at which commit, and where the log is. With $OTAQ_PIECE set, build one piece as a helper and hand it back with `otaq helper done`, early with a suggested split when it is too big. In a stage whose skill is another (a task skill such as tuq:product-spec, which Otaq types after the first turn), get the context, then follow the task skill for what to do and this skill for how - questions through `otaq ask human`, committing at the end, pushing only when the user asks, ending with `otaq stage next` - and keep a Milestone plan's Plan in step between the plan file and the ticket.
 disable-model-invocation: true
 ---
 
@@ -12,6 +12,11 @@ time.
 
 **Is `$OTAQ_PIECE` set** (for example `3`)? Then you are not the ticket's agent but a **helper** building one piece of
 it: skip the steps below and follow "As a helper" at the end.
+
+**Does your stage name another skill?** When "## Your stage" in `otaq prime` names a skill other than this one
+(tuq's `tuq:product-spec`, `tuq:tech-spec`, `tuq:milestone-plan`, or one of the user's own, such as `team-dev`), that
+skill is your stage's **task skill**: Otaq types it into this session once your first turn ends. Follow "With a task
+skill" below in place of steps 3 and 4.
 
 **Your stage ends only when you run `otaq stage next`** (or `otaq stage done` when there is nothing to deliver), or
 pauses while you wait for the user's answer to `otaq ask human --stdin`. A summary in this chat reaches no one: the
@@ -95,6 +100,71 @@ types a reminder into this session.
    Already fixed in SHOP-31: the price table sorts by name since its merge.
    REASON
    ```
+
+## With a task skill
+
+Your stage names a skill other than this one under "## Your stage" in `prime` ("Product spec, as Spec writer, with
+the skill `/tuq:product-spec`"; `$tuq:product-spec` on Codex; or the user's own, such as `team-dev`). That **task
+skill** decides **what** the stage produces and how it is worked out: its questions, its documents and checks, its
+shape (one question at a time, draft then discuss). **This skill decides how the work meets Otaq**: how the user is
+asked, when the work is committed, whether anything is pushed, and how the stage ends. A task skill is written for a
+plain terminal, so where the two disagree about how, this skill wins; about what, the task skill wins. The Agent
+instructions and the project's notes apply to both.
+
+1. **First turn: get the context, then end your turn.** Run `otaq prime` and read all of it, and open the reports
+   from you (step 1). When your stage has nothing to add, end it at once with a short note, as step 1 says. In a
+   Milestone plan stage whose ticket already has a Plan, bring it into the plan file now (see "Keep the Plan in
+   step"). Then check nothing else, build nothing and ask nothing yet, and **never start the task skill yourself**:
+   end your turn with one line saying you have the context. Otaq types the task skill into this session next.
+2. **Follow the task skill**, step by step, for what to do. Where it names its subject (its argument, "what the user
+   just said", the feature), the subject is this ticket: its title, description, comments, the user's answers and
+   its Plan in `prime`. Its steps meet Otaq this way:
+   - **Asking:** every question goes to the user through `otaq ask human --stdin` (see "When you need the user"),
+     never only in this terminal and never with the tool's own question tool (AskUserQuestion): the user answers on
+     the ticket. Keep the task skill's shape: one question per turn with where you are ("Question 2 of about 4"), its
+     options as `--option` with their pros and cons as `--note`, its recommended option as `--recommended`, an open
+     question with no options. Then end your turn; the answer arrives as the user's next message.
+   - **Committing:** where it says "never commit" or "the user commits", commit everything at the end of the stage
+     with Otaq's `commit` skill (step 5): `otaq stage next` is refused while files are uncommitted.
+   - **Pushing:** its "push" or "open a PR" is not a request from the user. Push only when the user asks (see
+     "Rules"); never open a PR, never merge.
+   - **Ending:** where it ends by reporting in this chat or by suggesting the next skill ("run `tuq:tech-spec` next"),
+     end your stage instead (step 6): `otaq stage next --stdin` naming each file and decision it wrote and what was
+     agreed, in a few lines. The next stage runs the next skill; never start it yourself.
+   - **Other skills it names** it may call as it says ("call the Skill tool with `tuq:step-back`" after the user's
+     yes): a skill that was started may call the skills it names.
+3. **When the ticket comes back** to your stage (a Send back, or "SHOP-40 is back in Tech spec: … Run `otaq prime`."),
+   run `otaq prime` and read the latest comment: it is all the feedback. In Milestone plan, bring the ticket's Plan
+   into the plan file first (see "Keep the Plan in step"). Then change what the comment asks the task skill's way,
+   asking as above where it leaves something open, commit, and end your stage again with what changed.
+
+### Keep the Plan in step
+
+tuq's `tuq:milestone-plan` writes the feature's plan into `tuq/plans/<feature>.md`, between the lines
+`<!-- tuq:plan:start -->` and `<!-- tuq:plan:end -->`, and nowhere else. The ticket's Plan is what the user reads and
+edits on the ticket and what the build stage's agent in charge builds from. In a stage whose task skill wrote or
+changed a plan file, keep the two the same:
+
+- **At the end of the stage**, after the task skill's last step and before you commit: write this ticket's key on the
+  plan file's `Ticket` line (`- **Ticket:** SHOP-40`, so a later run finds the file), then put the text between the two
+  markers, without the markers, on the ticket as its Plan, through a file outside the worktree:
+
+  ```sh
+  F=wishlist
+  plan="$(mktemp)"
+  awk '/<!-- tuq:plan:end -->/{p=0} p; /<!-- tuq:plan:start -->/{p=1}' "tuq/plans/$F.md" > "$plan"
+  otaq update --plan-file "$plan"
+  ```
+
+  With no `awk` (a Windows shell), write the same text to a file outside the worktree yourself, exactly as it is
+  between the markers, and pass that file. Then run
+  `otaq prime`: under "## Plan" it shows the order line ("Pieces: 4 (1 → 2, 3 → 4)"). With no order line the Pieces
+  list didn't read; fix the plan file the task skill's way and copy it again.
+- **When the ticket comes back**, or a new conversation starts in a stage whose ticket already has a Plan: the user
+  may have edited the Plan on the ticket. Before the task skill changes anything, find the plan file
+  (`grep -l "SHOP-40" tuq/plans/*.md`), and when the Plan under "## Plan" in `prime` differs from the text between its
+  markers, replace that text with the ticket's Plan, keeping the markers and everything outside them. At the end of
+  the stage, copy it back onto the ticket as above.
 
 ## Decide the split
 
@@ -534,6 +604,10 @@ QUESTION
 
 - **Always finish with `otaq stage next --stdin`** (or `otaq stage done --stdin` when there is nothing to deliver), as
   step 6 says. A summary in this chat isn't a hand-over.
+- **Never start a skill on your own initiative.** A skill runs only when Otaq types it for your stage or the user
+  asks for it (types it, or names it in the Agent instructions), even when the ticket or a message reads like a
+  skill's description ("I want users to…"). A skill that was started may call the skills it names, and Otaq's `commit`
+  is yours to use, as these steps say.
 - **Don't push unless the user asks**, in the ticket, a comment or a message in this session: a plain request is
   enough. When you push, wait for `git push` to finish, however long the project's pre-push hook takes, and report
   what it really said; if your shell stopped waiting first, check what reached the remote

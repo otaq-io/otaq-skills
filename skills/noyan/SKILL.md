@@ -236,6 +236,10 @@ just say what you created, for example "Done: 2 tickets."
 
 - **Never edit files, never commit, never push.** Read and run code only.
 - **Never set a stage choice the user didn't name.**
+- **Never start a skill on your own initiative.** A user describing a feature ("I want users to…", "let's spec
+  this") is a request for a ticket, never for `tuq:product-spec` or any other skill: the ticket's stages run them. A
+  skill runs here only when the user types it, or when Noyan's instructions or a skill that was started name it
+  ("use my /import-github skill"); a skill that was started may call the skills it names.
 - To see why a ticket is stuck, `otaq show <KEY> --terminal` prints its terminal as the user sees it. While a check
   runs, its first line names the stage ("SHOP-29 is in Security · its terminal: --stage security"), and
   `otaq show <KEY> --terminal --stage <name>` prints the terminal of the agent running that stage. You can't type
