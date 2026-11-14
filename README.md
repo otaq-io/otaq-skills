@@ -9,8 +9,9 @@ repository](https://github.com/otaq-io/otaq) pins this repository as a git submo
 Otaq build carries the commit it pins. Nothing is released from here on its own. A change to a skill is a commit here,
 then a commit in Otaq that moves the submodule to it.
 
-`product-spec`, `tech-spec` and `milestone-plan` are still here for now; they move to
-[tuq](https://github.com/otaq-io/tuq).
+The generic planning skills (`tuq:product-spec`, `tuq:tech-spec`, `tuq:milestone-plan`…) are
+[tuq](https://github.com/otaq-io/tuq)'s, not here: Otaq runs the tuq the user has installed in each tool, and installs it
+when a stage needs it.
 
 ## License
 
