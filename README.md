@@ -1,7 +1,7 @@
 # Otaq workflow skills
 
-The skills Otaq's agents run to work a ticket on its board: `work-ticket`, `validate`, `commit`, `open-pr`, `push`,
-`address-review`, `restack`, `answer-question`, `noyan` and `flow`. They are one plugin named `otaq`
+The skills Otaq's agents run to work a ticket on its board: `work-ticket`, `validate`, `check-ticket`, `commit`,
+`open-pr`, `push`, `address-review`, `restack`, `answer-question`, `noyan` and `flow`. They are one plugin named `otaq`
 (`.claude-plugin/plugin.json`, `skills/<name>/SKILL.md`).
 
 They ship inside the Otaq app, like its hooks, and change only with it: the [Otaq
