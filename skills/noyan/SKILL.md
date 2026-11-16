@@ -159,15 +159,15 @@ goes ahead.
 
 - **Two or more tickets:** propose first, then wait for the user's go-ahead.
 - **One ticket the user asked for explicitly** ("Also make a ticket to fix the typo in the README's install
-  section, with the Quick developer"): create it straight away, with the choices the user named:
+  section, no spec needed"): create it straight away, with the choices the user named:
 
   ```sh
-  otaq create "Fix README typo" --stage "Dev=Quick developer" --by-user --stdin <<'BODY'
+  otaq create "Fix README typo" --stage "Product spec=skip" --by-user --stdin <<'BODY'
   The install section of README.md says `npm intall`. Fix the typo.
   BODY
   ```
 
-  Then reply: "Created SHOP-41 · Dev: Quick developer".
+  Then reply: "Created SHOP-41 · Product spec: skip".
 
 ### The proposal table
 
@@ -178,42 +178,44 @@ Choices**. Number the tickets so the user can change any row by its number.
 I'm proposing 2 tickets:
   #   Title               Description                 Choices
   1   Orders API paging   cursor paging, 20 per page  —
-  2   Order detail page   items, totals, reorder      Dev: Quick developer
+  2   Order detail page   items, totals, reorder      Product spec: skip
 Say yes, or change rows ("2 needs a review", "drop 2").
 ```
 
-- The **Choices** cell shows only the choices **the user named**: each stage, then a colon and the agent's name or
-  `skip`, joined with " · " ("Dev: Quick developer · Review: skip"). It reads "—" otherwise, and the ticket runs
-  every stage with the stage's own agent.
-- Apply the user's changes ("2 needs a review", "drop 2", "2: Dev: Quick developer"), show the table again, and
+- The **Choices** cell shows only the choices **the user named**: each stage, then a colon and `skip`, joined with
+  " · " ("Product spec: skip · Tech spec: skip"). It reads "—" otherwise, and the ticket runs every stage of the
+  flow.
+- Apply the user's changes ("2 needs a review", "drop 2", "2: Tech spec: skip"), show the table again, and
   wait for the go-ahead.
 - **Above about 10 tickets** (a bulk import, say 60 issues) show one proposal for the whole batch: the count line,
   then a table **without the Description column** (**# · Title · Choices**) with only the **first 10 rows**, then
   "…50 more (say 'show all' to list them)". When the user says "show all", list every row. A row not shown can still
-  be changed by its number ("37: Dev: Quick developer"). Descriptions still go into each ticket.
+  be changed by its number ("37: Product spec: skip"). Descriptions still go into each ticket.
 
 ### Stage choices are the user's
 
-`prime --project` lists under **Stage choices** every stage a ticket may choose for: each stage, its own agent, the
-other agents whose tool has the stage's skill, and `skip` where the flow lets the stage be skipped. You set no choices of your own: every ticket runs every
-stage of its flow with the stage's own agent, unless the user named a choice ("1 skips Tech spec", "use the Quick
-developer for all of these"). Never suggest a skip because a stage looks unneeded for a ticket: its agent reads the
+`prime --project` lists under **Stage choices** every stage the flow lets a ticket skip. Skipping is the only choice
+a ticket has: every stage runs on the model, effort and instructions its flow gives it, and a ticket can't pick its
+own. When the user asks for another model for a ticket ("use opus for this one"), say that a stage's model is set
+for every ticket in **Edit flow**, in the stage's panel, and create the ticket without it. You set no choices of your
+own: every ticket runs every stage of its flow, unless the user named a skip ("1 skips Tech spec", "skip the specs
+for all of these"). Never suggest a skip because a stage looks unneeded for a ticket: its agent reads the
 stage's description and finishes at once when there is nothing to add.
 
 - Every choice comes from the user, so pass it with `--by-user`, and it reads *set by you* on the ticket:
 
   ```sh
-  otaq create "Order detail page" --deps SHOP-42 --stage "Dev=Quick developer" --by-user --stdin <<'BODY'
+  otaq create "Order detail page" --deps SHOP-42 --stage "Tech spec=skip" --by-user --stdin <<'BODY'
   Items, totals and a reorder button.
   BODY
   ```
 
 - For a batch, put the choices in the `otaq create -f` file, one line per choice under its ticket's `### Title`
-  heading (the stage, `=`, the agent's name or `skip`), and run `otaq create -f tickets.md --by-user`:
+  heading (the stage, `=`, `skip`), and run `otaq create -f tickets.md --by-user`:
 
   ```markdown
   ### Typo on returns page
-  - **Stage:** Dev=Quick developer
+  - **Stage:** Product spec=skip
 
   The returns page says "recieve". Fix the typo.
 
@@ -223,7 +225,7 @@ stage's description and finishes at once when there is nothing to add.
   ```
 
 - If the CLI refuses a choice with "Noyan sets only the stage choices the user names: add --by-user, or leave the
-  stage's own agent", the choice wasn't the user's: leave it out.
+  stage as the flow says", the choice wasn't the user's: leave it out.
 - The user's own choice always wins: a choice the user set is never changed back by an agent.
 
 ### When the user names no choice

@@ -626,10 +626,11 @@ QUESTION
   get no Run: the agent in charge runs the app after merging the pieces.
 - If `otaq stage next` is refused, read why (uncommitted files, a comment over 2,000 characters, or `prime` not run
   since Otaq last resumed you), fix it and run it again.
-- **You never set a stage choice: only the user picks a stage's agent or skips a stage.** If what you learned
-  changes how hard a later stage's work is (for example the change turned out risky), say so in your comment for the
-  user. If you try, the CLI refuses:
-  "Only the user picks a stage's agent: leave the stage's own agent, or ask the user to change it".
+- **You never set a stage choice: only the user skips a stage.** A stage's model and effort are set in the flow,
+  only in Edit flow, and a ticket never picks its own. If what you learned changes how hard a later stage's work is
+  (for example the change turned out risky), say so in your comment for the user. If you try to skip a stage or
+  choose for one, the CLI refuses: "Only the user chooses for a stage: leave it as the flow says, or ask the user to
+  change it".
 
 ## As a helper
 
